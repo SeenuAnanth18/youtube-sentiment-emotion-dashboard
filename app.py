@@ -1,7 +1,17 @@
+import os
+import gdown
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+# ================= DOWNLOAD MODEL FROM GOOGLE DRIVE =================
+MODEL_PATH = "sentiment_emotion_xlm_roberta.pth"
+
+if not os.path.exists(MODEL_PATH):
+    url = "https://drive.google.com/file/d/1OuI7uEYJVYwxlbB_Hs4nqt6EZHpG75iJ/view?usp=sharing"
+    gdown.download(url, MODEL_PATH, quiet=False)
+
+# ================= IMPORT AFTER MODEL DOWNLOAD =================
 from preprocessing.text_preprocessing import clean_text
 from models.sentiment_models import (
     textblob_sentiment,
@@ -71,7 +81,7 @@ with st.container():
     comment = st.text_area(
         "",
         height=120,
-        placeholder="Example: Movie climax super ah irundhuchu 🔥"
+        placeholder="Example: This is very worst"
     )
     analyze = st.button("🚀 Analyze")
     st.markdown('</div>', unsafe_allow_html=True)
