@@ -1,17 +1,23 @@
-import os
-import gdown
 import streamlit as st
+
+# ================= DOWNLOAD MODEL (CACHE) =================
+@st.cache_resource
+def download_model():
+    import os
+    import gdown
+
+    MODEL_PATH = "sentiment_emotion_xlm_roberta.pth"
+
+    if not os.path.exists(MODEL_PATH):
+        url = "https://drive.google.com/uc?id=1OuI7uEYJVYwxlbB_Hs4nqt6EZHpG75iJ"
+        gdown.download(url, MODEL_PATH, quiet=False)
+
+download_model()
+
+# ================= IMPORTS =================
 import pandas as pd
 import plotly.express as px
 
-# ================= DOWNLOAD MODEL FROM GOOGLE DRIVE =================
-MODEL_PATH = "sentiment_emotion_xlm_roberta.pth"
-
-if not os.path.exists(MODEL_PATH):
-    url = "https://drive.google.com/file/d/1OuI7uEYJVYwxlbB_Hs4nqt6EZHpG75iJ/view?usp=sharing"
-    gdown.download(url, MODEL_PATH, quiet=False)
-
-# ================= IMPORT AFTER MODEL DOWNLOAD =================
 from preprocessing.text_preprocessing import clean_text
 from models.sentiment_models import (
     textblob_sentiment,
@@ -74,7 +80,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ================= INPUT SECTION =================
+# ================= INPUT =================
 with st.container():
     st.markdown('<div class="glass">', unsafe_allow_html=True)
     st.subheader("📝 Enter YouTube Comment")
@@ -101,14 +107,12 @@ if analyze and comment.strip():
         final_sentiment = ensemble_voting(model_results)
         emotions = detect_emotion(clean_comment)
 
-        # Save history
         st.session_state.history.append({
             "Comment": comment,
             "Sentiment": final_sentiment,
             "Emotion": ", ".join(emotions)
         })
 
-    # ================= KPI CARDS =================
     col1, col2 = st.columns(2)
 
     with col1:
@@ -121,7 +125,6 @@ if analyze and comment.strip():
         st.metric("Dominant Emotion", emotions[0] if emotions else "Neutral")
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # ================= MODEL TABLE =================
     st.markdown('<div class="glass">', unsafe_allow_html=True)
     st.subheader("📊 Model Predictions")
     st.table(pd.DataFrame({
@@ -130,7 +133,6 @@ if analyze and comment.strip():
     }))
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ================= EMOTION TAGS =================
     st.markdown('<div class="glass">', unsafe_allow_html=True)
     st.subheader("😊 Detected Emotions")
     st.write(" | ".join(emotions))
@@ -165,7 +167,6 @@ if len(st.session_state.history) > 0:
         )
         st.plotly_chart(fig_emo, use_container_width=True)
 
-    # ================= HISTORY TABLE =================
     st.markdown("## 🗂 Comment Analysis History")
     st.dataframe(df, use_container_width=True)
 
