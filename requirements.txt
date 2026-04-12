@@ -7,3 +7,4 @@ emoji
 google-api-python-client
 gdown
 sentencepiece
+plotly
