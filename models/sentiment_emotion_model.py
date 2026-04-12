@@ -18,7 +18,7 @@ def load_model():
 
     tokenizer = XLMRobertaTokenizer.from_pretrained(MODEL_NAME)
 
-    # PyTorch 2.6 FIX
+    # Load classes
     sentiment_classes = torch.load(
         SENTIMENT_CLASSES_PATH,
         map_location="cpu",
@@ -55,11 +55,17 @@ def load_model():
 
             return sentiment_logits, emotion_logits
 
+    # Initialize model
     model = XLMRSentimentEmotion()
 
-    model.load_state_dict(
-        torch.load(WEIGHTS_PATH, map_location="cpu", weights_only=False)
+    # ===== FIX: load weights safely =====
+    state_dict = torch.load(
+        WEIGHTS_PATH,
+        map_location="cpu",
+        weights_only=False
     )
+
+    model.load_state_dict(state_dict, strict=False)
 
     model.eval()
 
