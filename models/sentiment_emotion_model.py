@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from transformers import XLMRobertaModel, XLMRobertaTokenizer
 import os
+import streamlit as st
 
 # ================= PATHS =================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -14,11 +15,11 @@ EMOTION_CLASSES_PATH = os.path.join(BASE_DIR, "emotion_classes.pt")
 
 
 # ================= LOAD MODEL =================
+@st.cache_resource
 def load_model():
 
     tokenizer = XLMRobertaTokenizer.from_pretrained(MODEL_NAME)
 
-    # Load classes
     sentiment_classes = torch.load(
         SENTIMENT_CLASSES_PATH,
         map_location="cpu",
@@ -55,10 +56,9 @@ def load_model():
 
             return sentiment_logits, emotion_logits
 
-    # Initialize model
     model = XLMRSentimentEmotion()
 
-    # ===== FIX: load weights safely =====
+    # ===== load weights safely =====
     state_dict = torch.load(
         WEIGHTS_PATH,
         map_location="cpu",
