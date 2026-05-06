@@ -48,7 +48,7 @@ The system supports multiple languages such as Tamil, English, and Tanglish, and
 
 ## 🛠️ Installation
 
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/SeenuAnanth18/youtube-sentiment-emotion-dashboard/tree/main
 cd your-repo-name
 pip install -r requirements.txt
 streamlit run app.py
